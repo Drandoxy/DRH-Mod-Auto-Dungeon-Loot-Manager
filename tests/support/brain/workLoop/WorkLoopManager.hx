@@ -1,0 +1,1 @@
+package brain.workLoop; class WorkLoopManager { public function new() {} public function removeDoLater(t:DoLater):Void {t.dead=true;t.callback=null;} }

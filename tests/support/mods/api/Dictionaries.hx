@@ -1,0 +1,1 @@
+package mods.api; class Dictionaries { public static function keys(d:Dynamic):Array<Dynamic> { var out=[]; var it:Iterator<Dynamic> = d.keys(); for(k in it) out.push(k); return out; } public static function remove(d:Dynamic,k:Dynamic):Void { d.remove(k); } }

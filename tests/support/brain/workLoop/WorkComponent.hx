@@ -1,0 +1,1 @@
+package brain.workLoop; class WorkComponent { public var mTasks = new haxe.ds.ObjectMap<Dynamic,Dynamic>(); public var mWorkLoopManager = new WorkLoopManager(); public var gameClock:Dynamic = {}; public function new() {} public function doLater(delay:Float,cb:Dynamic):DoLater {var t=new DoLater(cb);mTasks.set(t,true);return t;} }

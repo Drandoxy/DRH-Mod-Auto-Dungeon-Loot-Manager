@@ -1,0 +1,1 @@
+package openfl.display; class DisplayObjectContainer { public var numChildren:Int; public function new(n:Int) {numChildren=n;} }

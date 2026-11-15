@@ -1,0 +1,1 @@
+package facade; class DBFacade { public var gameMaster:Dynamic; public var dbAccountInfo:Dynamic; public function new() {} }

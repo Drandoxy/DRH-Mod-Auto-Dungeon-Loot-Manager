@@ -1,0 +1,1 @@
+package mods.api; class Context { public var core:Dynamic = {alive:true}; public var logs:Array<String> = []; public function new() {} public function log(s:String):Void { logs.push(s); } }
