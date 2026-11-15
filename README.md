@@ -53,10 +53,6 @@ Early restart has the same completion-XP and treasure loss as leaving normally. 
 DRH 18 and Mod API 1.4.0 or compatible later 1.x. This mod uses game internals (`extends`) and can need updates after a game change. Use it in place of Quick Dungeon Restart, Instant Victory Reveal and Summary Chest Rules to avoid competing summary handlers.
 
 
-## License
-
-[MIT](LICENSE).
-
 ## Validation
 
 Launcher validation and 41 isolated Haxe countdown and reward checks pass. Run `tests/run.ps1 -Haxe <path-to-haxe.exe>` to reproduce them.
