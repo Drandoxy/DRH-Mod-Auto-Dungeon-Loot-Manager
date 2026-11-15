@@ -23,6 +23,8 @@ Manage dungeon rewards and optionally continue or restart after the results.
 </tr>
 </table>
 
+### Settings
+
 <table>
 <tr>
   <td align="center"><a href="docs/images/settings-automation.png"><img src="docs/images/settings-automation.png" alt="Automation, countdown and animations" width="265"></a></td>
