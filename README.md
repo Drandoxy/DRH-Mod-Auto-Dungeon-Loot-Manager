@@ -29,7 +29,7 @@ Manage dungeon rewards and optionally continue or restart after the results.
 <tr>
   <td align="center"><a href="docs/images/settings-automation.png"><img src="docs/images/settings-automation.png" alt="Automation, countdown and animations" width="265"></a><br><sub>Automation, countdown and animations</sub></td>
   <td align="center"><a href="docs/images/settings-chests.png"><img src="docs/images/settings-chests.png" alt="Chest rules" width="265"></a><br><sub>Chest rules</sub></td>
-  <td align="center"><a href="docs/images/settings-item-boxes.png"><img src="docs/images/settings-item-boxes.png" alt="Legendary chests and item boxes" width="265"></a><br><sub>Legendary chests and item boxes</sub></td>
+  <td align="center"><a href="docs/images/settings-item-boxes.png"><img src="docs/images/settings-item-boxes.png" alt="Legendary chests and item boxes" width="265"></a><br><sub>Chest rules #2</sub></td>
 </tr>
 </table>
 
