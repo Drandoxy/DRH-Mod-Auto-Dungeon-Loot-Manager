@@ -35,8 +35,8 @@ Manage dungeon rewards and optionally continue or restart after the results.
 
 <table>
 <tr>
-  <td align="center"><a href="docs/images/results-restart.png"><img src="docs/images/results-restart.png" alt="Restart as the default" width="240"></a><br><sub>Restart as the default</sub></td>
-  <td align="center"><a href="docs/images/results-next.png"><img src="docs/images/results-next.png" alt="Next as the default" width="240"></a><br><sub>Next as the default</sub></td>
+  <td align="center"><a href="docs/images/results-restart.png"><img src="docs/images/results-restart.png" alt="Restart as the default" width="240"></a><br><sub>Restart as the default "Next" button in settings</sub></td>
+  <td align="center"><a href="docs/images/results-next.png"><img src="docs/images/results-next.png" alt="Next as the default" width="240"></a><br><sub>Next as the default "Next" button in settings</sub></td>
 </tr>
 </table>
 
