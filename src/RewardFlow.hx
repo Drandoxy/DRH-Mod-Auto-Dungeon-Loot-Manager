@@ -14,6 +14,7 @@ class RewardFlow {
     var facade:DBFacade;
     var summary:Dynamic;
     var options:AutoOptions;
+    var fullInventory:Bool;
     var reveal:Dynamic;
     var guard:Dynamic;
     var revealFailed:Bool = false;
@@ -24,8 +25,9 @@ class RewardFlow {
     public var paused(default, null):Bool = false;
     public var pauseReason(default, null):String = "";
 
-    public function new(ctx:Context, facade:DBFacade, summary:Dynamic, options:AutoOptions) {
+    public function new(ctx:Context, facade:DBFacade, summary:Dynamic, options:AutoOptions, fullInventory:Bool = false) {
         this.ctx = ctx; this.facade = facade; this.summary = summary; this.options = options;
+        this.fullInventory = fullInventory;
         reveal = Reflect.field(summary, "updateRevealState");
         guard = function(clock:Dynamic) {
             if (summary == null || summary.mLeaving == true) return;
@@ -40,9 +42,16 @@ class RewardFlow {
     }
 
     public function tick(now:Float):Void {
-        if (summary == null || summary.mLeaving == true || !ctx.core.alive) return;
-        if (options.skip.value && !revealFailed && !paused) fastForward(now);
-        if (summary.mChestTransactionFailedPopup != null) pause("chest transaction failed");
+        if (summary == null || summary.mLeaving == true || !ctx.core.alive || paused) return;
+        if (summary.mChestTransactionFailedPopup != null) {
+            pause("chest transaction failed");
+            return;
+        }
+        if (options.loot.value && summary.mStorageFullPopUp != null) {
+            pause("storage is full; handle the chest manually");
+            return;
+        }
+        if (options.skip.value && !revealFailed) fastForward(now);
         if (!options.loot.value || paused || summary.mRevealState != 12 || summary.mTownHeader == null) return;
         if (!artReady()) return;
         if (waitingSince >= 0) {
@@ -66,7 +75,7 @@ class RewardFlow {
         var chest:Dynamic = doober == null ? null : facade.gameMaster.chestsById.itemFor(doober.ChestId);
         if (chest == null) { pause("chest type is unavailable"); return; }
         if (options.keep(Std.string(chest.Rarity))) {
-            if (!facade.dbAccountInfo.inventoryInfo.hasRoomForChest(chest.Id)) {
+            if (!fullInventory && !facade.dbAccountInfo.inventoryInfo.hasRoomForChest(chest.Id)) {
                 pause("storage is full; handle the chest manually");
                 // Restore the game's own chest prompt for manual handling.
                 call("loadNextChestPopUp", []);

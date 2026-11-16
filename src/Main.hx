@@ -239,7 +239,8 @@ class Main extends Mod {
         if (exitControls != null) exitControls.update(!pending && saved != null && saved.valid());
         if (summary == null || summaryControlsFailed) return;
         try {
-            if (rewards == null) rewards = new RewardFlow(context, facade, summary, options);
+            if (rewards == null) rewards = new RewardFlow(context, facade, summary, options,
+                Type.resolveClass("mods.full_inventory.Main") != null);
             rewards.tick(now);
             if (summaryControls == null) summaryControls = new SummaryControls(facade, summary, options,
                 function() { requestRestart(); }, function() { cancelAuto(); rememberNextPrivacy(); }, cancelAuto);

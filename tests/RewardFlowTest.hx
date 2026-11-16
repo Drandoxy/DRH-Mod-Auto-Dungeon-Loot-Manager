@@ -9,7 +9,7 @@ class RewardFlowTest {
     static function check(b:Bool,s:String) {checks++;if(!b)throw s;}
     static function main() {
         var ctx=new Context(); var facade=new DBFacade(); var options=new AutoOptions();
-        var keeps=0; var drops=0; var room=true;
+        var keeps=0; var drops=0; var room=true; var prompts=0;
         facade.gameMaster={dooberById:new Lookup({ChestId:60003}),chestsById:new Lookup({Id:60003,Rarity:"RARE"})};
         facade.dbAccountInfo={id:1,inventoryInfo:{hasRoomForChest:function(id:Int) return room}};
         var row:Dynamic={valid:1,chest_type_1:123,chest_type_2:0,chest_type_3:0,chest_type_4:0};
@@ -18,7 +18,7 @@ class RewardFlowTest {
             mDungeonReport:[row,null,null,null],mChestMovieClips:[[holder],[],[],[]],mWorkComponent:work};
         Reflect.setField(summary,"keepChestFromInventory",function(slot:Int,from:Bool) {keeps++;Reflect.setField(summary,"mInfoPopup",{});});
         Reflect.setField(summary,"closeKeyChestPopup",function() {Reflect.setField(summary,"mTreasureFoundPopup",null);});
-        Reflect.setField(summary,"loadNextChestPopUp",function() {});
+        Reflect.setField(summary,"loadNextChestPopUp",function() {prompts++; Reflect.setField(summary,"mTreasureFoundPopup",{});});
         Reflect.setField(summary,"removeItemFromSlot",function(slot:Int) {row.chest_type_1=0;summary.mItemCount=0;});
         Reflect.setField(summary,"mNetworkComponent",{send_DropChest:function(id:Int,slot:Int) {drops++;}});
         var flow=new RewardFlow(ctx,facade,summary,options);
@@ -37,7 +37,44 @@ class RewardFlowTest {
         check(drops==0,"timeout never falls back to discard");flow.destroy();
         summary.mInfoPopup=null;room=false;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);
-        check(flow.paused,"full storage pauses automation");check(drops==0,"full storage cannot discard");flow.destroy();
+        check(flow.paused,"full storage pauses automation");
+        check(prompts==1,"full storage hands the chest back to the native prompt once");
+        summary.mTreasureFoundPopup=null;
+        flow.tick(901);flow.tick(2000);
+        check(prompts==1 && drops==0,"dismissing the prompt does not reopen or discard it");
+        flow.destroy();
+
+        summary.mStorageFullPopUp={};
+        flow=new RewardFlow(ctx,facade,summary,options);
+        flow.tick(0);
+        summary.mStorageFullPopUp=null;
+        flow.tick(1000);
+        check(flow.paused && prompts==1,"dismissing an existing storage-full popup does not restart automation");
+        flow.destroy();
+
+        var keepsBeforeFull=keeps;
+        var logsBeforeFull=ctx.logs.length;
+        flow=new RewardFlow(ctx,facade,summary,options,true);
+        flow.tick(0);flow.tick(100);
+        check(keeps==keepsBeforeFull+1,"Full Inventory allows one native keep with full storage");
+        Reflect.setField(summary,"mChestTransactionFailedPopup",{});
+        summary.mInfoPopup=null;
+        flow.tick(200);flow.tick(300);flow.tick(1700);
+        check(flow.paused && flow.pauseReason=="chest transaction failed","rejected keep pauses automation");
+        check(ctx.logs.length==logsBeforeFull+2,"logs one keep and one failure across repeated ticks");
+        summary.mChestTransactionFailedPopup=null;
+        flow.tick(2000);
+        check(keeps==keepsBeforeFull+1 && drops==0 && !flow.settled(),"dismissed failure does not retry, discard, or restart");
+        flow.destroy();
+
+        flow=new RewardFlow(ctx,facade,summary,options,true);
+        flow.tick(0);
+        row.chest_type_1=0;summary.mItemCount=0;summary.mInfoPopup=null;
+        flow.tick(350);
+        check(keeps==keepsBeforeFull+2 && flow.settled(),"server-confirmed keep with Full Inventory permits countdown");
+        flow.destroy();
+
+        row.chest_type_1=123;summary.mItemCount=1;
         room=true;options.keepValue=false;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);
         check(drops==1,"explicit discard rule invokes native drop");flow.destroy();

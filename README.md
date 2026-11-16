@@ -46,7 +46,7 @@ Based on Danny's [Quick Dungeon Restart](https://github.com/rendable/DRH-Mod-Qui
 
 ## Rewards
 
-All chest types are kept by default. Common, uncommon, rare, legendary, small item boxes and royal item boxes have separate rules. Unknown rewards are kept. A keep request waits for server confirmation and the account refresh; storage-full, transaction errors and timeouts pause automation without discarding the chest.
+All chest types are kept by default. Common, uncommon, rare, legendary, small item boxes and royal item boxes have separate rules. Unknown rewards are kept. A keep request waits for server confirmation and the account refresh; full storage, transaction errors and timeouts pause automation without discarding the chest. With Full Inventory loaded, auto loot can try to keep a chest even when the standard storage check would block it. The server must still accept the request.
 
 Early restart has the same completion-XP and treasure loss as leaving normally. Re-entry uses normal matchmaking for the same dungeon type; the server chooses its instance and layout.
 
