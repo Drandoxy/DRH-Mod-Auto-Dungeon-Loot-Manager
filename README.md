@@ -10,6 +10,8 @@ Manage dungeon rewards and optionally continue or restart after the results.
 - Skip loot and results animations speeds up results counting and loot reveals. The dungeon victory animation plays normally.
 - Ctrl + Shift + R restarts the current dungeon. The shortcut is registered through the Mod API and appears in Settings → Controls.
 - Settings → Mods contains the options; changes save automatically. The previous Friends Only setting is kept on re-entry.
+
+Based on Danny's [Quick Dungeon Restart](https://github.com/rendable/DRH-Mod-Quick-Dungeon-Restart) and [Instant Victory Reveal](https://github.com/rendable/DRH-Mod-Instant-Victory-Reveal), and iClawSuit's [Summary Chest Rules](https://github.com/clawsuit/DRH-Mod-SummaryChestRules). Disable those three mods when using Auto Dungeon / Loot Manager to avoid competing summary handlers.
 <!-- /drh:show -->
 
 ## Preview
@@ -50,12 +52,12 @@ Early restart has the same completion-XP and treasure loss as leaving normally. 
 
 ## Compatibility
 
-DRH 18 and Mod API 1.4.0 or compatible later 1.x. This mod uses game internals (`extends`) and can need updates after a game change. Use it in place of Quick Dungeon Restart, Instant Victory Reveal and Summary Chest Rules to avoid competing summary handlers.
+DRH 18 and Mod API 1.4.0 or compatible later 1.x. This mod uses game internals (`extends`) and can need updates after a game change.
 
 
-## Credits
+## License
 
-Based on Danny's [Quick Dungeon Restart](https://github.com/rendable/DRH-Mod-Quick-Dungeon-Restart) and [Instant Victory Reveal](https://github.com/rendable/DRH-Mod-Instant-Victory-Reveal), and iClawSuit's [Summary Chest Rules](https://github.com/clawsuit/DRH-Mod-SummaryChestRules). MIT; see [LICENSE](LICENSE).
+[MIT](LICENSE).
 
 ## Validation
 

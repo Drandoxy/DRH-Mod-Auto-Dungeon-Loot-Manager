@@ -227,8 +227,6 @@ class Main extends Mod {
         var now = Date.now().getTime();
         if (now < uiTick) return;
         uiTick = now + 100;
-        try { options.refreshMenu(facade); }
-        catch (error:Dynamic) { context.log("settings layout: " + Std.string(error)); }
         var popup = ExitControls.find(facade);
         if (exitControls != null && !exitControls.matches(popup)) {
             exitControls.destroy();
