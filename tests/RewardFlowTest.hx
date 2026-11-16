@@ -96,6 +96,26 @@ class RewardFlowTest {
         var timeoutCallback:Dynamic=task.callback;work.mWorkLoopManager.removeDoLater(task);work.mTasks.remove(task);timeoutCallback({});
         check(revealed==1,"asset timeout releases native results flow for manual handling");
         flow.destroy();
+        holder.numChildren=1;
+        summary.mRevealState=12;
+        summary.mTownHeader={};
+        var finalAttempts=0;
+        var manualPromptsBefore=prompts;
+        var finalReveal=function(clock:Dynamic) {
+            finalAttempts++;
+            throw "summary player unavailable";
+        };
+        Reflect.setField(summary,"updateRevealState",finalReveal);
+        task=work.doLater(0.1,finalReveal);
+        flow=new RewardFlow(ctx,facade,summary,options);
+        flow.tick(0);
+        check(finalAttempts==0 && work.mTasks.exists(task),"final reveal keeps its native timer");
+        var finish:Dynamic=task.callback;
+        work.mWorkLoopManager.removeDoLater(task);work.mTasks.remove(task);finish({});
+        check(finalAttempts==1 && prompts==manualPromptsBefore+1,"failed final reveal opens the native loot prompt");
+        flow.tick(400);
+        check(flow.paused && !flow.settled() && prompts==manualPromptsBefore+1,"failed reveal stays paused without reopening or restarting");
+        flow.destroy();
         options.skip.value=false;options.loot.value=false;
         summary.mRevealState=12;summary.mTownHeader={};summary.mItemCount=1;
         row.chest_type_1=123;summary.mTreasureFoundPopup={};

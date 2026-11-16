@@ -37,7 +37,12 @@ class RewardFlow {
                 if (work != null) work.doLater(0.1, guard);
                 return;
             }
-            Reflect.callMethod(summary, reveal, [clock]);
+            try {
+                Reflect.callMethod(summary, reveal, [clock]);
+            } catch (error:Dynamic) {
+                if (phase != 12) throw error;
+                handleFinalRevealFailure(error);
+            }
         };
     }
 
@@ -126,6 +131,13 @@ class RewardFlow {
                     }
                     break;
                 }
+                // The last native step needs the live summary player and attaches
+                // the chest icons. Let its original timer run instead of calling
+                // it in the same frame as the accelerated counting steps.
+                if (phase == 12) {
+                    found.callback = guard;
+                    break;
+                }
                 manager.removeDoLater(found);
                 Dictionaries.remove(tasks, found);
                 Reflect.callMethod(summary, reveal, [work.gameClock]);
@@ -133,6 +145,23 @@ class RewardFlow {
         } catch (error:Dynamic) {
             revealFailed = true;
             pause("reveal could not finish safely: " + Std.string(error));
+        }
+    }
+
+    function handleFinalRevealFailure(error:Dynamic):Void {
+        revealFailed = true;
+        pause("final reward reveal failed: " + Std.string(error));
+        if (summary.mLeaving == true || summary.mTownHeader == null
+            || summary.mItemCount <= 0 || SummaryRules.dialogsOpen(summary)) return;
+        var hasChest = false;
+        for (slot in 0...4) if (chestAt(slot) != 0) hasChest = true;
+        if (!hasChest) return;
+        try {
+            // Replaying the last reveal could create a second header or menu
+            // layer. The native loot prompt can open directly from the report.
+            call("loadNextChestPopUp", []);
+        } catch (promptError:Dynamic) {
+            ctx.log("could not open the native loot prompt: " + Std.string(promptError));
         }
     }
 
