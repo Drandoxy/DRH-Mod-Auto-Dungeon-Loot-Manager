@@ -30,7 +30,6 @@ class Main extends Mod {
 	var exitControls:ExitControls;
 	var exitPopups:ExitPopupFinder;
 	var uiTick:Float = 0;
-	var levelUpSkipper:LevelUpSkipper = new LevelUpSkipper();
 	var options:AutoOptions;
 	var rewards:RewardFlow;
 	var countdown:RestartCountdown = new RestartCountdown();
@@ -260,7 +259,6 @@ class Main extends Mod {
 		if (now < uiTick)
 			return;
 		uiTick = now + 100;
-		levelUpSkipper.tick(facade, options.skip.value);
 		var popup = exitPopups == null ? ExitControls.find(facade) : exitPopups.find();
 		if (exitControls != null && !exitControls.matches(popup)) {
 			exitControls.destroy();
@@ -369,7 +367,6 @@ class Main extends Mod {
 	}
 
 	override public function dispose():Void {
-		levelUpSkipper.destroy();
 		pending = false;
 		pendingEntry = null;
 		summaryExit = false;

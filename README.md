@@ -5,13 +5,11 @@ Manage dungeon rewards and optionally continue or restart after the results.
 
 - Adds a native Restart button to the exit menu and a second button to the results screen.
 - Default Next button chooses Next or Restart as the main results button and the automatic action.
-- Auto Next / Restart waits 0Ă˘â‚¬â€ś10 seconds after rewards are handled; the default delay is 6 seconds. Manual Next, Restart or Exit cancels it for that run.
+- Auto Next / Restart waits 0–10 seconds after rewards are handled; the default delay is 6 seconds. Manual Next, Restart or Exit cancels it for that run.
 - Automatically handle loot keeps or discards chest types using your saved rules. With it off, choose loot manually; the timer waits until all reward dialogs close.
-- Skip loot and results animations speeds up results counting and loot reveals, and automatically presses Sweet on level-up milestone popups. Turn it off to keep those popups. The dungeon victory animation plays normally.
-- Ctrl + Shift + R restarts the current dungeon. The shortcut is registered through the Mod API and appears in Settings Ă˘â€ â€™ Controls.
-- Settings Ă˘â€ â€™ Mods contains the options; changes save automatically. The previous Friends Only setting is kept on re-entry.
-
-Works alongside [Party Auto Join](https://github.com/Drandoxy/DRH-Mod-Party-Time-Auto-Game-Joiner): automatic following pauses Next/Restart automation while loot handling and animation skipping continue. Manual mode restores normal progression controls. [Anti-AFK](https://github.com/Drandoxy/DRH-Mod-Anti-AFK) is also optional and works independently during dungeon play. Neither mod is replaced.
+- Skip loot and results animations speeds up results counting and loot reveals. The dungeon victory animation plays normally.
+- Ctrl + Shift + R restarts the current dungeon. The shortcut is registered through the Mod API and appears in Settings → Controls.
+- Settings → Mods contains the options; changes save automatically. The previous Friends Only setting is kept on re-entry.
 
 Based on Danny's [Quick Dungeon Restart](https://github.com/rendable/DRH-Mod-Quick-Dungeon-Restart) and [Instant Victory Reveal](https://github.com/rendable/DRH-Mod-Instant-Victory-Reveal), and iClawSuit's [Summary Chest Rules](https://github.com/clawsuit/DRH-Mod-SummaryChestRules). Disable those three mods when using Auto Dungeon / Loot Manager to avoid competing summary handlers.
 <!-- /drh:show -->
@@ -63,6 +61,6 @@ DRH 18 and Mod API 1.4.0 or compatible later 1.x. This mod uses game internals (
 
 ## Validation
 
-Launcher validation and isolated Haxe countdown, reward and level-up popup checks pass. Run `tests/run.ps1 -Haxe <path-to-haxe.exe>` to reproduce them.
+Launcher validation and 41 isolated Haxe countdown and reward checks pass. Run `tests/run.ps1 -Haxe <path-to-haxe.exe>` to reproduce them.
 
 The Restart control and dungeon/floor title also support the separate death/revive exit confirmation. That popup is discovered through its small native navigation graph, since ActorReviveState does not retain it on the HUD. Native Cancel closes the confirmation before the usual server-confirmed restart exit flow.
