@@ -5,10 +5,10 @@ $testWork = Join-Path ([IO.Path]::GetTempPath()) ("drh-auto-tests-" + [guid]::Ne
 New-Item -ItemType Directory -Path $testWork | Out-Null
 Copy-Item -Path (Join-Path $testRoot 'support\*') -Destination $testWork -Recurse
 $package = Join-Path $testWork 'mods\auto_dungeon_loot_manager'
-foreach ($name in @('RestartCountdown','RewardFlow','SummaryRules')) {
+foreach ($name in @('RestartCountdown','RewardFlow','SummaryRules','LevelUpSkipper')) {
  Copy-Item -LiteralPath (Join-Path $testRoot "..\src\$name.hx") -Destination $package
 }
-foreach ($name in @('CountdownTest','RewardFlowTest')) {
+foreach ($name in @('CountdownTest','RewardFlowTest','LevelUpTest')) {
  & $Haxe -cp $testWork -cp $testRoot --main $name --interp
  if ($LASTEXITCODE -ne 0) { throw "$name failed" }
 }

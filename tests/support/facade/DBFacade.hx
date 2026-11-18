@@ -1,1 +1,1 @@
-package facade; class DBFacade { public var gameMaster:Dynamic; public var dbAccountInfo:Dynamic; public function new() {} }
+package facade; class DBFacade { public var menuNavigationController:Dynamic; public var gameMaster:Dynamic; public var dbAccountInfo:Dynamic; public function new() {} }
