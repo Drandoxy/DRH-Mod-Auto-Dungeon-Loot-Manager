@@ -1,6 +1,7 @@
 package mods.auto_dungeon_loot_manager;
 
 import facade.DBFacade;
+import mods.api.Dictionaries;
 import brain.uI.UIObject;
 import brain.uI.UIButton;
 
@@ -21,9 +22,15 @@ class LevelUpSkipper {
 			return;
 		}
 		var focused:UIObject = nav.focusedUiObject;
-		if (focused == null)
-			return;
-		var queue:Array<UIObject> = [focused];
+		var queue:Array<UIObject> = [];
+		if (focused != null)
+			queue.push(focused);
+		// Mouse users may have no selected control. The layer still retains
+		// its native default close control, linked down to the Sweet button.
+		var defaults:Dynamic = Reflect.field(nav, "mDefaultUIObjs");
+		var anchor:UIObject = defaults == null ? null : cast Dictionaries.get(defaults, "DUNGEON_SUMMARY_LEVEL_UP_POPUP");
+		if (anchor != null && anchor != focused)
+			queue.push(anchor);
 		var seen:Array<UIObject> = [];
 		while (queue.length > 0 && seen.length < 12) {
 			var current:UIObject = queue.shift();

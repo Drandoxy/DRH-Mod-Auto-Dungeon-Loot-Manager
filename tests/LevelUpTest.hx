@@ -14,6 +14,12 @@ class LevelUpTest {
   layer="DUNGEON_SUMMARY_LEVEL_UP_POPUP";sweet.enabled=false;skipper.tick(f,true);check(calls==1,"Disabled button pressed");
   sweet.enabled=true;sweet.root.stage=null;skipper.tick(f,true);check(calls==1,"Unloaded button pressed");
   sweet.root.stage={};skipper.tick(f,true);check(calls==2,"Next popup did not rearm");
+  skipper.destroy();
+  var defaults=new Map<String,Dynamic>();defaults.set("DUNGEON_SUMMARY_LEVEL_UP_POPUP",close);
+  Reflect.setField(f.menuNavigationController,"mDefaultUIObjs",defaults);
+  Reflect.setField(f.menuNavigationController,"focusedUiObject",null);
+  skipper.tick(f,false);check(calls==2,"No-focus setting off dismissed popup");
+  skipper.tick(f,true);skipper.tick(f,true);check(calls==3,"No-focus Sweet popup was not acknowledged exactly once");
   trace("PASS: skip setting off/on, exact popup, native Sweet callback, once-only, disabled/unloaded guards, rearm");
  }
 }
