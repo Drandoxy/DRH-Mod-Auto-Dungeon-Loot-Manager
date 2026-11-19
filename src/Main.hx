@@ -30,6 +30,7 @@ class Main extends Mod {
 	var exitControls:ExitControls;
 	var exitPopups:ExitPopupFinder;
 	var uiTick:Float = 0;
+	var levelUpDismissal:LevelUpDismissal = new LevelUpDismissal();
 	var options:AutoOptions;
 	var rewards:RewardFlow;
 	var countdown:RestartCountdown = new RestartCountdown();
@@ -259,6 +260,12 @@ class Main extends Mod {
 		if (now < uiTick)
 			return;
 		uiTick = now + 100;
+		try {
+			if (levelUpDismissal.tick(facade.menuNavigationController, options.skip.value))
+				context.log("local Sweet fix: acknowledged native level-up popup");
+		} catch (error:Dynamic) {
+			context.log("local Sweet fix unavailable: " + Std.string(error));
+		}
 		var popup = exitPopups == null ? ExitControls.find(facade) : exitPopups.find();
 		if (exitControls != null && !exitControls.matches(popup)) {
 			exitControls.destroy();
@@ -367,6 +374,7 @@ class Main extends Mod {
 	}
 
 	override public function dispose():Void {
+		levelUpDismissal.clear();
 		pending = false;
 		pendingEntry = null;
 		summaryExit = false;

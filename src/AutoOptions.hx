@@ -27,7 +27,7 @@ class AutoOptions {
 		seconds = ctx.settings.choice("restartDelay", "Next / Restart after X seconds", "Delay before continuing or restarting.", choices, "6");
 		swap = ctx.settings.choice("swapButtons", "Default Next button", "Choose the main button on the results screen.",
 			[{value: "no", label: "Next"}, {value: "yes", label: "Restart"}], "no");
-		skip = ctx.settings.flag("skipAnimations", "Skip loot and results animations", "Skip loot reveals and results counting.", true);
+		skip = ctx.settings.flag("skipAnimations", "Skip loot and results animations", "Skip loot reveals, results counting and level-up Sweet popups.", true);
 		loot = ctx.settings.flag("autoLoot", "Automatically handle loot", "Choose which chests to keep automatically.", true);
 		common = ctx.settings.flag("keepCommon", "Keep common chests", "Keep common chests. Turn off to discard.", true);
 		uncommon = ctx.settings.flag("keepUncommon", "Keep uncommon chests", "Keep uncommon chests. Turn off to discard.", true);
