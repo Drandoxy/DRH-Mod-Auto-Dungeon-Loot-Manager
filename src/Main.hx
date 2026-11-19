@@ -312,9 +312,7 @@ class Main extends Mod {
 			var held = partyTime != null && partyTime.autoHeld(now);
 			var fire = countdown.tick(now, options.auto.value && !held, settled, options.delay());
 			var left = countdown.remaining(now);
-			summaryControls.status(left >= 0 ? (options.swap.value == "yes" ? "Restart in " : "Auto Next in ")
-				+ left
-				+ "s" : (options.auto.value && rewards.paused && !countdown.cancelled ? "Auto Next / Restart paused" : ""));
+			summaryControls.status(left >= 0 ? (options.swap.value == "yes" ? "Restart in " : "Auto Next in ") + left + "s" : "");
 			if (fire) {
 				if (options.swap.value == "yes")
 					requestRestart(false);
