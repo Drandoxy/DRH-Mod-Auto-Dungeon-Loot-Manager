@@ -67,3 +67,7 @@ DRH 18 and Mod API 1.5.0 or compatible later 1.x. This mod uses game internals (
 Launcher validation and isolated Haxe countdown, reward and level-up dismissal checks pass. Run `tests/run.ps1 -Haxe <path-to-haxe.exe>` to reproduce them.
 
 The Restart control and dungeon/floor title also support the separate death/revive exit confirmation. That popup is discovered through its small native navigation graph, since ActorReviveState does not retain it on the HUD. Native Cancel closes the confirmation before the usual server-confirmed restart exit flow.
+
+## Release text integrity
+
+Release packaging uses `python scripts/release.py`. It reads and writes explicit UTF-8/bytes, checks all tracked text and release scripts for unexpected non-ASCII/control characters, validates decoded JSON strings, and verifies every ZIP entry against source bytes. Launcher descriptions use plain ASCII punctuation such as `0-10` and `Settings > Mods`. This deliberately strict policy prevents accidental encoding conversions from entering future releases. After publication, both assets are downloaded and compared with their local files. Runtime behavior is unchanged in 0.2.29.
