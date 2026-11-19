@@ -53,9 +53,9 @@ Early restart has the same completion-XP and treasure loss as leaving normally. 
 
 ## Compatibility
 
-Works alongside [Party Auto Join](https://github.com/Drandoxy/DRH-Mod-Party-Auto-Join). While following a leader, Party Auto Join holds automatic Next/Restart; loot handling and animation skipping continue. Manual mode restores normal progression.
+Works alongside Party Auto Join 0.1.67 or later using shared in-process state, without heartbeat files. While following a leader, Party Auto Join holds automatic Next/Restart; loot handling and animation skipping continue. Manual mode restores normal progression.
 
-DRH 18 and Mod API 1.4.0 or compatible later 1.x. This mod uses game internals (`extends`) and can need updates after a game change.
+DRH 18 and Mod API 1.5.0 or compatible later 1.x. This mod uses game internals (`extends`) and can need updates after a game change.
 
 
 ## License

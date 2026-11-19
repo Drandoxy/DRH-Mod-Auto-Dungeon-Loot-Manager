@@ -1,1 +1,1 @@
-package mods.api; class Context { public var core:Dynamic = {alive:true}; public var logs:Array<String> = []; public function new() {} public function log(s:String):Void { logs.push(s); } }
+package mods.api; class Context { public var activeMods:Array<String> = []; public function isActive(id:String):Bool { return activeMods.indexOf(id)>=0; } public var core:Dynamic = {alive:true}; public var logs:Array<String> = []; public function new() {} public function log(s:String):Void { logs.push(s); } }

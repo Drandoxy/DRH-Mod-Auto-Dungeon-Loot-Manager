@@ -38,7 +38,7 @@ class Main extends Mod {
 
 	override public function init(context:Context):Void {
 		this.context = context;
-		partyTime = new PartyTimeGuard(context.data);
+		partyTime = new PartyTimeGuard(context);
 		options = new AutoOptions(context);
 		context.core.onObjectReady(function(object) {
 			if (Std.isOfType(object, distributedObjects.HeroGameObjectOwner))
@@ -286,7 +286,7 @@ class Main extends Mod {
 			return;
 		try {
 			if (rewards == null)
-				rewards = new RewardFlow(context, facade, summary, options, Type.resolveClass("mods.full_inventory.Main") != null);
+				rewards = new RewardFlow(context, facade, summary, options, context.isActive("full_inventory"));
 			rewards.tick(now);
 			if (summaryControls == null)
 				summaryControls = new SummaryControls(facade, summary, options, function() {

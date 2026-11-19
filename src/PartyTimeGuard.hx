@@ -1,35 +1,27 @@
 package mods.auto_dungeon_loot_manager;
 
-/** Optional local Party Time integration. Expiring heartbeat cannot keep Auto Dungeon paused after a crash. */
+import mods.api.Context;
+
+/** Optional same-process contract; absent or failed Party Auto Join never holds progression. */
 class PartyTimeGuard {
-	var path:String;
-	var next = 0.;
-	var waiting = false;
-	var held = false;
+	var context:Context;
 
-	public function new(data:String) {
-		path = data + "/../party_time_auto_game_joiner/waiting.json";
-	}
-
-	public function autoHeld(now:Float):Bool {
-		active(now);
-		return held;
+	public function new(context:Context) {
+		this.context = context;
 	}
 
 	public function active(now:Float):Bool {
-		if (now < next)
-			return waiting;
-		next = now + 200;
-		waiting = false;
-		held = false;
-		try {
-			if (sys.FileSystem.exists(path)) {
-				var d = haxe.Json.parse(sys.io.File.getContent(path));
-				var fresh = Date.now().getTime() - d.time < 3000;
-				waiting = d.waiting == true && fresh;
-				held = d.autoHold == true && fresh;
-			}
-		} catch (_:Dynamic) {}
-		return waiting;
+		return flag("integrationWaiting");
+	}
+
+	public function autoHeld(now:Float):Bool {
+		return flag("integrationHeld");
+	}
+
+	function flag(name:String):Bool {
+		if (!context.isActive("party_auto_join"))
+			return false;
+		var party = Type.resolveClass("mods.party_auto_join.Main");
+		return party != null && Reflect.field(party, name) == true;
 	}
 }
