@@ -23,6 +23,7 @@ class RewardFlow {
 	var waitingSlot:Int = -1;
 	var cooldown:Float = 0;
 	var artworkWait:Float = -1;
+	var completedSince:Float = -1;
 
 	public var paused(default, null):Bool = false;
 	public var pauseReason(default, null):String = "";
@@ -55,7 +56,10 @@ class RewardFlow {
 	}
 
 	public function tick(now:Float):Void {
-		if (summary == null || summary.mLeaving == true || !ctx.core.alive || (paused && !recoverLoot))
+		if (summary == null || summary.mLeaving == true || !ctx.core.alive)
+			return;
+		recoverCompletedRewards(now);
+		if (paused && !recoverLoot)
 			return;
 		if (summary.mChestTransactionFailedPopup != null) {
 			pause("chest transaction failed");
@@ -127,6 +131,40 @@ class RewardFlow {
 			cooldown = now + 350;
 			ctx.log("discarded summary chest in slot " + slot + " by the saved rarity rule");
 		}
+	}
+
+	/** A previous failure must not hold progression after native reward handling completes. */
+	function recoverCompletedRewards(now:Float):Void {
+		if (!paused)
+			return;
+		var report:Dynamic = Reflect.field(summary, "mDungeonReport");
+		var row:Dynamic = report == null ? null : report[0];
+		var complete = SummaryRules.blocked(summary) == null
+			&& Reflect.field(summary, "mItemCount") == 0
+			&& row != null
+			&& Reflect.field(row, "valid") != null
+			&& Reflect.field(row, "valid") != 0;
+		for (slot in 0...4) {
+			var chest:Dynamic = row == null ? null : Reflect.field(row, "chest_type_" + (slot + 1));
+			if (chest == null || chest != 0)
+				complete = false;
+		}
+		if (!complete) {
+			completedSince = -1;
+			return;
+		}
+		if (completedSince < 0)
+			completedSince = now;
+		if (now - completedSince < 500)
+			return;
+		// Empty confirmed slots and closed dialogs settle even a previously timed-out keep.
+		waitingSince = -1;
+		waitingSlot = -1;
+		paused = false;
+		recoverLoot = false;
+		pauseReason = "";
+		completedSince = -1;
+		ctx.log("reward handling completed; automatic progression resumed");
 	}
 
 	function fastForward(now:Float):Void {

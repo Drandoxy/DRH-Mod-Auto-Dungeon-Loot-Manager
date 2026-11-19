@@ -34,7 +34,14 @@ class RewardFlowTest {
         row.chest_type_1=123;summary.mItemCount=1;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);flow.tick(10001);
         check(flow.paused,"keep timeout pauses automation");check(!flow.settled(),"timeout cannot restart");
-        check(drops==0,"timeout never falls back to discard");flow.destroy();
+        check(drops==0,"timeout never falls back to discard");
+        row.chest_type_1=0;summary.mItemCount=0;summary.mInfoPopup=null;
+        flow.tick(10100);check(flow.paused,"empty reward state must stabilize before recovery");
+        summary.mInfoPopup={};flow.tick(10500);check(flow.paused,"open dialog prevents recovery");
+        summary.mInfoPopup=null;flow.tick(10600);flow.tick(11099);check(flow.paused,"closed dialogs require full stable interval");
+        flow.tick(11100);check(!flow.paused && flow.settled(),"completed native rewards clear stale pause");
+        check(keeps==2 && drops==0,"recovery never repeats the chest action");
+        flow.destroy();row.chest_type_1=123;summary.mItemCount=1;
         summary.mInfoPopup=null;room=false;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);
         check(flow.paused,"full storage pauses automation");

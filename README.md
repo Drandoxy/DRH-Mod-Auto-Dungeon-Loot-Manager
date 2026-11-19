@@ -5,11 +5,12 @@ Manage dungeon rewards and optionally continue or restart after the results.
 
 - Adds a native Restart button to the exit menu and a second button to the results screen.
 - Default Next button chooses Next or Restart as the main results button and the automatic action.
-- Auto Next / Restart waits 0â€“10 seconds after rewards are handled; the default delay is 6 seconds. Manual Next, Restart or Exit cancels it for that run.
+- Auto Next / Restart waits 0-10 seconds after rewards are handled; the default delay is 6 seconds. Manual Next, Restart or Exit cancels it for that run.
+- If reward handling pauses after an error, automatic progression resumes once the native summary confirms no remaining rewards or open dialogs for half a second.
 - Automatically handle loot keeps or discards chest types using your saved rules. With it off, choose loot manually; the timer waits until all reward dialogs close.
 - Skip loot and results animations speeds up results counting and loot reveals, and dismisses the level-up Sweet popup. Turn this setting off to keep Sweet popups for manual dismissal. The dungeon victory animation plays normally.
-- Ctrl + Shift + R restarts the current dungeon. The shortcut is registered through the Mod API and appears in Settings â†’ Controls.
-- Settings â†’ Mods contains the options; changes save automatically. The previous Friends Only setting is kept on re-entry.
+- Ctrl + Shift + R restarts the current dungeon. The shortcut is registered through the Mod API and appears in Settings > Controls.
+- Settings > Mods contains the options; changes save automatically. The previous Friends Only setting is kept on re-entry.
 
 Based on Danny's [Quick Dungeon Restart](https://github.com/rendable/DRH-Mod-Quick-Dungeon-Restart) and [Instant Victory Reveal](https://github.com/rendable/DRH-Mod-Instant-Victory-Reveal), and iClawSuit's [Summary Chest Rules](https://github.com/clawsuit/DRH-Mod-SummaryChestRules). Disable those three mods when using Auto Dungeon / Loot Manager to avoid competing summary handlers.
 <!-- /drh:show -->
@@ -51,6 +52,8 @@ All chest types are kept by default. Common, uncommon, rare, legendary, small it
 Early restart has the same completion-XP and treasure loss as leaving normally. Re-entry uses normal matchmaking for the same dungeon type; the server chooses its instance and layout.
 
 ## Compatibility
+
+Works alongside [Party Auto Join](https://github.com/Drandoxy/DRH-Mod-Party-Auto-Join). While following a leader, Party Auto Join holds automatic Next/Restart; loot handling and animation skipping continue. Manual mode restores normal progression.
 
 DRH 18 and Mod API 1.4.0 or compatible later 1.x. This mod uses game internals (`extends`) and can need updates after a game change.
 
