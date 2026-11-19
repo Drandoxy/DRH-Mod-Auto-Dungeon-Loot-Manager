@@ -20,6 +20,12 @@ class EncodingTests(unittest.TestCase):
     def test_escaped_json_rejected(self):
         with self.assertRaises(ValueError):
             release.check_text(br'{"description":"bad \u00e2"}', "mod.json")
+    def test_description_preserves_crlf(self):
+        raw = b"<!-- drh:show -->\r\nwaits 0-10 seconds\r\nnext line\r\n<!-- /drh:show -->"
+        shown = raw.decode("utf-8").split("<!-- drh:show -->")[1].split("<!-- /drh:show -->")[0].strip()
+        import json
+        self.assertEqual(json.loads(json.dumps({"longDescription": shown}))["longDescription"], "waits 0-10 seconds\r\nnext line")
+
     def test_control_rejected(self):
         with self.assertRaises(ValueError):
             release.check_text(b"bad\x00", "README.md")

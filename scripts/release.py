@@ -54,7 +54,7 @@ def build(root, output):
             assert z.read(name) == (root / name).read_bytes(), name
             if Path(name).suffix in TEXT or Path(name).name == "LICENSE":
                 check_text(z.read(name), name)
-    readme = (root / "README.md").read_text(encoding="utf-8")
+    readme = (root / "README.md").read_bytes().decode("utf-8")
     shown = readme.split("<!-- drh:show -->", 1)[1].split("<!-- /drh:show -->", 1)[0].strip()
     repository = "https://github.com/Drandoxy/DRH-Mod-Auto-Dungeon-Loot-Manager"
     entry = {key: manifest[key] for key in ("id", "name", "version", "author", "description", "api", "drh", "uses")}
