@@ -183,7 +183,8 @@ class RewardFlow {
 					var task:DoLater = cast key;
 					if (!task.isDestroyed()
 						&& task.callback != null
-						&& (Reflect.compareMethods(task.callback, reveal) || Reflect.compareMethods(task.callback, guard))) {
+						&& (Reflect.compareMethods(task.callback, reveal) || Reflect.compareMethods(task.callback, guard))
+						&& queued(manager, task)) {
 						found = task;
 						break;
 					}
@@ -217,6 +218,18 @@ class RewardFlow {
 			revealFailed = true;
 			pause("reveal could not finish safely: " + Std.string(error));
 		}
+	}
+
+	/**
+	 * Whether the task still waits in the work loop. The game neither destroys a
+	 * DoLater once it has run nor removes it from the summary's tasks, a
+	 * weak-keyed dictionary that only a collection empties: calling the reveal
+	 * for such a task would start a second reveal chain, and each chain opens
+	 * its own chest prompt when it reaches the last step.
+	 */
+	function queued(manager:WorkLoopManager, task:DoLater):Bool {
+		var queue:Dynamic = Reflect.field(manager, "doLaterQueue");
+		return queue == null || queue.contains(task);
 	}
 
 	function handleFinalRevealFailure(error:Dynamic):Void {

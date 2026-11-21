@@ -1,1 +1,1 @@
-package brain.workLoop; class DoLater { public var callback:Dynamic; public var delay:Float; public var dead:Bool=false; public function new(cb:Dynamic) {callback=cb;delay=0.1;} public function isDestroyed():Bool {return dead;} }
+package brain.workLoop; class DoLater { public var callback:Dynamic; public var delay:Float; public var dueTime:Float=0; public var dead:Bool=false; public function new(cb:Dynamic) {callback=cb;delay=0.1;} public function isDestroyed():Bool {return dead;} }
