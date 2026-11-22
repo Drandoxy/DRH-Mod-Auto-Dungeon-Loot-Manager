@@ -47,13 +47,13 @@ Based on Danny's [Quick Dungeon Restart](https://github.com/rendable/DRH-Mod-Qui
 
 ## Rewards
 
-All chest types are kept by default. Common, uncommon, rare, legendary, small item boxes and royal item boxes have separate rules. Unknown rewards are kept. A keep request waits for server confirmation and the account refresh; full storage, transaction errors and timeouts pause automation without discarding the chest. With Full Inventory loaded, auto loot can try to keep a chest even when the standard storage check would block it. The server must still accept the request.
+All chest types are kept by default. Common, uncommon, rare, legendary, small item boxes and royal item boxes have separate rules. Unknown rewards are kept. A keep request waits for server confirmation and the account refresh; a slow confirmation keeps waiting without repeating the request, while full storage and transaction errors pause automation without discarding the chest. With Full Inventory loaded, auto loot can try to keep a chest even when the standard storage check would block it. The server must still accept the request.
 
 Early restart has the same completion-XP and treasure loss as leaving normally. Re-entry uses normal matchmaking for the same dungeon type; the server chooses its instance and layout.
 
 ## Compatibility
 
-Works alongside Party Auto Join 0.1.67 or later using shared in-process state, without heartbeat files. While following a leader, Party Auto Join holds automatic Next/Restart; loot handling and animation skipping continue. Manual mode restores normal progression.
+Works alongside Party Auto Join 0.1.67 or later using shared in-process state, without heartbeat files (0.1.73 or later is recommended). While following a leader, Party Auto Join holds automatic Next/Restart; loot handling and animation skipping continue. Manual mode restores normal progression.
 
 DRH 18 and Mod API 1.5.0 or compatible later 1.x. This mod uses game internals (`extends`) and can need updates after a game change.
 
@@ -71,3 +71,10 @@ The Restart control and dungeon/floor title also support the separate death/revi
 ## Release text integrity
 
 Release packaging uses `python scripts/release.py`. It reads and writes explicit UTF-8/bytes, checks all tracked text and release scripts for unexpected non-ASCII/control characters, validates decoded JSON strings, and verifies every ZIP entry against source bytes. Launcher descriptions use plain ASCII punctuation such as `0-10` and `Settings > Mods`. This deliberately strict policy prevents accidental encoding conversions from entering future releases. After publication, both assets are downloaded and compared with their local files. Runtime behavior is unchanged in 0.2.29.
+
+## Changes since 0.2.30
+
+- Party Auto Join integration reads a hidden, non-interactive marker from the shared overlay, including sibling per-mod overlay layers. Party Auto Join 0.1.67-0.1.72 still works through the older shared fields. Following holds automatic Next/Restart while loot handling continues.
+- Ultimate Rampage final victory: at floor 55 of an `INFINITE_` dungeon, automatic progression returns to town after reward processing instead of retrying or selecting Next. Manual restart remains available; Party following holds still take priority.
+- Slow keep confirmations and slow chest artwork no longer hit a fixed timeout. Keep requests stay sequential and are not repeated while waiting, so all four summary chests can be kept on a slow game. Storage-full and transaction errors still pause automation.
+- Fixed duplicate chest prompts on the results screen and KEEP reporting "Transaction failed" when chest artwork loaded late: animation skipping now only advances reveal tasks still queued in the work loop (contributed by Tutez64).

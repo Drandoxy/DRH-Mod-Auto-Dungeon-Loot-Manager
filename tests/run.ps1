@@ -8,7 +8,7 @@ $package = Join-Path $testWork 'mods\auto_dungeon_loot_manager'
 foreach ($name in @('RestartCountdown','RewardFlow','SummaryRules','LevelUpDismissal','PartyTimeGuard')) {
  Copy-Item -LiteralPath (Join-Path $testRoot "..\src\$name.hx") -Destination $package
 }
-foreach ($name in @('CountdownTest','RewardFlowTest','LevelUpDismissalTest','PartyIntegrationTest')) {
+foreach ($name in @('CountdownTest','RewardFlowTest','FiredRevealTaskTest','LevelUpDismissalTest','PartyIntegrationTest')) {
  & $Haxe -cp $testWork -cp $testRoot --main $name --interp
  if ($LASTEXITCODE -ne 0) { throw "$name failed" }
 }

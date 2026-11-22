@@ -1,1 +1,1 @@
-package openfl.display; class DisplayObjectContainer { public var numChildren:Int; public function new(n:Int) {numChildren=n;} }
+package openfl.display;class DisplayObjectContainer {public var children:Array<Dynamic>=[];public var parent:DisplayObjectContainer;public var numChildren:Int=0;public function new(n:Int=0){children=[for(i in 0...n)null];numChildren=n;}public function getChildAt(i:Int):Dynamic{return children[i];}public function getChildByName(n:String):Dynamic {for(c in children)if(c!=null&&c.name==n)return c;return null;}}

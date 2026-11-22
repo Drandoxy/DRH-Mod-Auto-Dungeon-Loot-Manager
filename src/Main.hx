@@ -24,6 +24,9 @@ class Main extends Mod {
 	var player:PlayerGameObjectOwner;
 	var localHero:distributedObjects.HeroGameObjectOwner;
 	var summary:DistributedDungeonSummary;
+	var lastFloorNumber = 0;
+	var lastFloorMap = "";
+	var finalTownRequested = false;
 	var summaryControls:SummaryControls;
 	var summaryControlsFailed:Bool = false;
 	var summaryExit:Bool = false;
@@ -47,6 +50,7 @@ class Main extends Mod {
 				clearSummary();
 				summary = cast object;
 				summaryControlsFailed = false;
+				finalTownRequested = false;
 				countdown.reset();
 			}
 			if (Std.isOfType(object, PlayerGameObjectOwner)) {
@@ -118,9 +122,35 @@ class Main extends Mod {
 			saved = entry;
 	}
 
+	function finalRampage():Bool {
+		if (summary == null || lastFloorNumber != 55)
+			return false;
+		var node = Reflect.field(summary, "mCurrentMapNode");
+		var kind = node == null ? lastFloorMap : Std.string(Reflect.field(node, "Constant"));
+		return kind.indexOf("INFINITE_") == 0 && Reflect.field(summary, "mDungeonSuccess") == true;
+	}
+
+	function leaveFinalRampage():Void {
+		if (finalTownRequested || SummaryRules.blocked(summary) != null)
+			return;
+		finalTownRequested = true;
+		countdown.cancel();
+		facade.mainStateMachine.setOneShotReloadTownCallback(facade.mainStateMachine.enterTownState);
+		try {
+			facade.mDistributedObjectManager.mMatchMaker.RequestExit();
+		} catch (error:Dynamic) {
+			finalTownRequested = false;
+			context.log("Final victory town exit failed: " + Std.string(error));
+		}
+	}
+
 	function requestRestart(manual:Bool = true):Bool {
 		if (partyTime != null && partyTime.active(Date.now().getTime()))
 			return true;
+		if (!manual && finalRampage()) {
+			leaveFinalRampage();
+			return true;
+		}
 		if (manual)
 			cancelAuto();
 		if (pending)
@@ -282,6 +312,10 @@ class Main extends Mod {
 		}
 		if (exitControls != null)
 			exitControls.update(!pending && saved != null && saved.valid());
+		if (summary == null && context.state.floor != null) {
+			lastFloorNumber = context.state.floor.number;
+			lastFloorMap = context.state.floor.map;
+		}
 		if (summary == null || summaryControlsFailed)
 			return;
 		try {
@@ -314,6 +348,10 @@ class Main extends Mod {
 			var left = countdown.remaining(now);
 			summaryControls.status(left >= 0 ? (options.swap.value == "yes" ? "Restart in " : "Auto Next in ") + left + "s" : "");
 			if (fire) {
+				if (finalRampage()) {
+					leaveFinalRampage();
+					return;
+				}
 				if (options.swap.value == "yes")
 					requestRestart(false);
 				else if (!summaryControls.autoNext()) {

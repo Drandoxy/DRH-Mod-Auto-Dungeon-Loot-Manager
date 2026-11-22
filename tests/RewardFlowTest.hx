@@ -33,14 +33,9 @@ class RewardFlowTest {
         flow.destroy();
         row.chest_type_1=123;summary.mItemCount=1;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);flow.tick(10001);
-        check(flow.paused,"keep timeout pauses automation");check(!flow.settled(),"timeout cannot restart");
-        check(drops==0,"timeout never falls back to discard");
-        row.chest_type_1=0;summary.mItemCount=0;summary.mInfoPopup=null;
-        flow.tick(10100);check(flow.paused,"empty reward state must stabilize before recovery");
-        summary.mInfoPopup={};flow.tick(10500);check(flow.paused,"open dialog prevents recovery");
-        summary.mInfoPopup=null;flow.tick(10600);flow.tick(11099);check(flow.paused,"closed dialogs require full stable interval");
-        flow.tick(11100);check(!flow.paused && flow.settled(),"completed native rewards clear stale pause");
-        check(keeps==2 && drops==0,"recovery never repeats the chest action");
+        check(!flow.paused && !flow.settled(),"slow confirmation keeps waiting without pausing or leaving");
+        flow.tick(120000);check(keeps==2 && drops==0 && !flow.settled(),"two-minute delay repeated or abandoned keep");
+        row.chest_type_1=0;summary.mItemCount=0;summary.mInfoPopup=null;flow.tick(120100);check(flow.settled(),"late confirmed keep did not finish");
         flow.destroy();row.chest_type_1=123;summary.mItemCount=1;
         summary.mInfoPopup=null;room=false;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);
@@ -99,9 +94,9 @@ class RewardFlowTest {
         holder.numChildren=0;summary.mRevealState=10;revealed=0;
         task=work.doLater(0.1,reveal);flow=new RewardFlow(ctx,facade,summary,options);
         flow.tick(0);flow.tick(16000);
-        check(flow.paused,"asset timeout pauses auto actions");
+        check(!flow.paused,"slow artwork must remain waiting");
         var timeoutCallback:Dynamic=task.callback;work.mWorkLoopManager.removeDoLater(task);work.mTasks.remove(task);timeoutCallback({});
-        check(revealed==1,"asset timeout releases native results flow for manual handling");
+        check(revealed==0,"slow artwork must not bypass asset barrier");holder.numChildren=1;flow.tick(17000);check(revealed==1,"late artwork did not release reveal");
         flow.destroy();
         holder.numChildren=1;
         summary.mRevealState=12;
@@ -137,6 +132,14 @@ class RewardFlowTest {
         summary.mTreasureFoundPopup=null;
         check(flow.settled(),"manual loot complete and dialogs closed permits countdown");
         flow.destroy();
+        flow.destroy();options.loot.value=true;options.skip.value=false;options.keepValue=true;room=true;summary.mRevealState=12;summary.mInfoPopup=null;summary.mTreasureFoundPopup=null;summary.mStorageFullPopUp=null;
+        row.chest_type_1=123;row.chest_type_2=123;row.chest_type_3=123;row.chest_type_4=123;summary.mItemCount=4;summary.mChestMovieClips=[[new DisplayObjectContainer(1),new DisplayObjectContainer(1),new DisplayObjectContainer(1),new DisplayObjectContainer(1)],[],[],[]];
+        var collected:Array<Int>=[];Reflect.setField(summary,"keepChestFromInventory",function(slot:Int,from:Bool){collected.push(slot);summary.mInfoPopup={};});flow=new RewardFlow(ctx,facade,summary,options);
+        for(slot in 0...4){var now=slot*120000.;flow.tick(now);check(collected.length==slot+1 && collected[slot]==slot,"all four slots must be requested sequentially");flow.tick(now+90000);check(collected.length==slot+1 && !flow.settled(),"slow keep duplicated or skipped slot");Reflect.setField(row,"chest_type_"+(slot+1),0);summary.mItemCount=3-slot;summary.mInfoPopup=null;}
+        flow.tick(500000);
+        check(flow.settled() && collected.length==4,"all four confirmations must settle");flow.destroy();
+
+
         Sys.println("Reward flow: "+checks+" checks passed");
     }
 }

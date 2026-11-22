@@ -2,7 +2,7 @@
   "id": "auto_dungeon_loot_manager",
   "name": "Auto Dungeon / Loot Manager",
   "description": "Manage dungeon loot and automatically continue or restart, with a countdown and optional animation skipping.",
-  "version": "0.2.30",
+  "version": "0.2.35",
   "author": "Drandox",
   "api": "1.5.0",
   "drh": "18",

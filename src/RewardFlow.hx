@@ -22,7 +22,6 @@ class RewardFlow {
 	var waitingSince:Float = -1;
 	var waitingSlot:Int = -1;
 	var cooldown:Float = 0;
-	var artworkWait:Float = -1;
 	var completedSince:Float = -1;
 
 	public var paused(default, null):Bool = false;
@@ -77,11 +76,10 @@ class RewardFlow {
 			return;
 		if (waitingSince >= 0) {
 			if (chestAt(waitingSlot) == 0 && summary.mInfoPopup == null) {
+				ctx.log("server confirmed summary chest kept in slot " + waitingSlot);
 				waitingSince = -1;
 				waitingSlot = -1;
 			} else {
-				if (now - waitingSince >= 10000)
-					pause("server did not confirm keeping the chest");
 				return;
 			}
 		}
@@ -183,7 +181,8 @@ class RewardFlow {
 					var task:DoLater = cast key;
 					if (!task.isDestroyed()
 						&& task.callback != null
-						&& (Reflect.compareMethods(task.callback, reveal) || Reflect.compareMethods(task.callback, guard))) {
+						&& (Reflect.compareMethods(task.callback, reveal) || Reflect.compareMethods(task.callback, guard))
+						&& queued(manager, task)) {
 						found = task;
 						break;
 					}
@@ -195,11 +194,6 @@ class RewardFlow {
 					// Guard the scheduled callback too, so native time cannot
 					// run past the asset barrier while the mod waits.
 					found.callback = guard;
-					if (artworkWait < 0)
-						artworkWait = now;
-					if (now - artworkWait > 15000) {
-						pause("chest artwork is still loading");
-					}
 					break;
 				}
 				// The last native step needs the live summary player and attaches
@@ -217,6 +211,18 @@ class RewardFlow {
 			revealFailed = true;
 			pause("reveal could not finish safely: " + Std.string(error));
 		}
+	}
+
+	/**
+	 * Whether the task still waits in the work loop. The game neither destroys a
+	 * DoLater once it has run nor removes it from the summary's tasks, a
+	 * weak-keyed dictionary that only a collection empties: calling the reveal
+	 * for such a task would start a second reveal chain, and each chain opens
+	 * its own chest prompt when it reaches the last step.
+	 */
+	function queued(manager:WorkLoopManager, task:DoLater):Bool {
+		var queue:Dynamic = Reflect.field(manager, "doLaterQueue");
+		return queue == null || queue.contains(task);
 	}
 
 	function handleFinalRevealFailure(error:Dynamic):Void {
