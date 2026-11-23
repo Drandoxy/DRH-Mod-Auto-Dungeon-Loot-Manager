@@ -54,6 +54,11 @@ class RewardFlow {
 		};
 	}
 
+	/** True once a keep request has waited this long for server confirmation. */
+	public function keepWaitingLonger(now:Float, delay:Float = 3000):Bool {
+		return waitingSince >= 0 && now - waitingSince >= delay;
+	}
+
 	public function tick(now:Float):Void {
 		if (summary == null || summary.mLeaving == true || !ctx.core.alive)
 			return;

@@ -78,3 +78,7 @@ Release packaging uses `python scripts/release.py`. It reads and writes explicit
 - Ultimate Rampage final victory: at floor 55 of an `INFINITE_` dungeon, automatic progression returns to town after reward processing instead of retrying or selecting Next. Manual restart remains available; Party following holds still take priority.
 - Slow keep confirmations and slow chest artwork no longer hit a fixed timeout. Keep requests stay sequential and are not repeated while waiting, so all four summary chests can be kept on a slow game. Storage-full and transaction errors still pause automation.
 - Fixed duplicate chest prompts on the results screen and KEEP reporting "Transaction failed" when chest artwork loaded late: animation skipping now only advances reveal tasks still queued in the work loop (contributed by Tutez64).
+
+## Changes since 0.2.35
+
+- When a kept chest waits more than 3 seconds for server confirmation, the results screen shows "Server confirming chest..." so it is clear why nothing moves. Automation still waits without pausing or repeating the request.

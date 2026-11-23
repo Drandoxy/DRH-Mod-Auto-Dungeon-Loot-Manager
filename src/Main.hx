@@ -346,7 +346,12 @@ class Main extends Mod {
 			var held = partyTime != null && partyTime.autoHeld(now);
 			var fire = countdown.tick(now, options.auto.value && !held, settled, options.delay());
 			var left = countdown.remaining(now);
-			summaryControls.status(left >= 0 ? (options.swap.value == "yes" ? "Restart in " : "Auto Next in ") + left + "s" : "");
+			if (left >= 0)
+				summaryControls.status((options.swap.value == "yes" ? "Restart in " : "Auto Next in ") + left + "s");
+			else if (rewards.keepWaitingLonger(now))
+				summaryControls.status("Server confirming chest...");
+			else
+				summaryControls.status("");
 			if (fire) {
 				if (finalRampage()) {
 					leaveFinalRampage();

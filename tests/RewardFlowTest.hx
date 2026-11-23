@@ -34,8 +34,10 @@ class RewardFlowTest {
         row.chest_type_1=123;summary.mItemCount=1;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);flow.tick(10001);
         check(!flow.paused && !flow.settled(),"slow confirmation keeps waiting without pausing or leaving");
+        check(!flow.keepWaitingLonger(2999) && flow.keepWaitingLonger(10001),"slow keep status appears only after three seconds");
         flow.tick(120000);check(keeps==2 && drops==0 && !flow.settled(),"two-minute delay repeated or abandoned keep");
         row.chest_type_1=0;summary.mItemCount=0;summary.mInfoPopup=null;flow.tick(120100);check(flow.settled(),"late confirmed keep did not finish");
+        check(!flow.keepWaitingLonger(120100),"slow keep status clears after confirmation");
         flow.destroy();row.chest_type_1=123;summary.mItemCount=1;
         summary.mInfoPopup=null;room=false;
         flow=new RewardFlow(ctx,facade,summary,options);flow.tick(0);
